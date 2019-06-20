@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
-use Illuminate\Support\Facades\Mail;
-use App\Mail\registerUserMail;
+use App\Events\NewUserRegisteredEvent;
 
 class RegisterController extends Controller
 {
@@ -75,10 +74,9 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+        
+        event(new NewUserRegisteredEvent($user));   //Events
 
-        $registerUserMail = new registerUserMail($user->name);  //add name to registerUserMail class;
-
-        Mail::to($user->email)->send($registerUserMail); 
 
         return $user;
         

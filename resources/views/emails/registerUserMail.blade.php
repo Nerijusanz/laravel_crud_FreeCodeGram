@@ -1,6 +1,7 @@
 @component('mail::message')
-#Thanks,{{$name}} 
-
+#Thanks,{{$user->name}} 
+#Username:{{$user->username}}
+#Email: {{$user->email}}
 Welcome to registered to freeCodeGram
 
 @component('mail::button', ['url' => ''])

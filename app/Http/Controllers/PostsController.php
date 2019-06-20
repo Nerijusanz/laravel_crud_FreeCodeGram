@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 use App\Post;
 
 class PostsController extends Controller
@@ -46,16 +47,21 @@ class PostsController extends Controller
 
         //dd(request()->all());
 
-        $this->validate($request,[
-            'caption'=>['required', 'string', 'max:255'],
-            'image' => 'image|nullable|max:1999'
+        request()->validate([
+            'caption'=>['required', 'string', 'max:255']
         ]);
 
+        if(request()->hasFile('image')){
+            request()->validate([
+                'image' => 'image|nullable|max:1999'
+            ]);
+        }
+ 
         $post = new Post;
-        $post->user_id = auth()->user()->id;
+        $post->user_id = auth()->user()->id;    //authenticated user
         $post->caption = $request->input('caption');
 
-        if($request->hasFile('image')){
+        if(request()->hasFile('image')){
             // Get filename with the extension
             $filenameWithExt = $request->file('image')->getClientOriginalName();
             // Get just filename
@@ -66,6 +72,10 @@ class PostsController extends Controller
             $fileNameToStore= $filename.'_'.time().'.'.$extension;
             // Upload Image
             $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
+
+            //processing image dimensions
+            $image = Image::make(public_path('storage/images/'.$fileNameToStore))->fit(300,300);
+            $image->save();
 
             //save uploaded file to posts DB
             $post->image = $fileNameToStore;
@@ -124,6 +134,10 @@ class PostsController extends Controller
             
             // Upload Image
             $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
+
+            //processing image dimensions
+            $image = Image::make(public_path('storage/images/'.$fileNameToStore))->fit(300,300);
+            $image->save();
 
             //save uploaded file to posts DB
             $post->image = $fileNameToStore;

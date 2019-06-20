@@ -11,16 +11,16 @@ class registerUserMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $name;
+    public $user;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($name)
+    public function __construct($user)
     {
-        $this->name = $name;    //got from registerController@create
+        $this->user = $user;    //got from registerController@create
     }
 
     /**
@@ -31,6 +31,6 @@ class registerUserMail extends Mailable
     public function build()
     {
 
-        return $this->markdown('emails.registerUserMail')->with('name',$this->name);    //attach name to email blade template
+        return $this->markdown('emails.registerUserMail');    //attach name to email blade template
     }
 }
