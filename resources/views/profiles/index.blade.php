@@ -9,7 +9,7 @@
         </div>
     @endif
             
-    @if(Auth::user())
+    @if(Auth::user()->can('create',\App\User::class))
         <div class="row">
             <div class="col-md-8 col-sm-8 mb-2">     
                 <a href="/posts/create" class="btn btn-primary">
@@ -47,13 +47,20 @@
                                 <img style="width:25px; height: 25px;" src="/storage/images/no_image.png" />
                             @endif
                         </td>
-                        <td><a href="/posts/{{$post['id']}}">{{$post['caption']}}</a></td>
-                        <td class="text-right"><a class="btn btn-default " href="/posts/{{$post['id']}}/edit"><i class="fa fa-edit"></i></a></td>
                         <td>
-                            {!!Form::open(['action' => ['PostsController@destroy', $post['id'] ], 'method' => 'POST', 'class' => 'text-right'])!!}
-                            {{Form::hidden('_method', 'DELETE')}}
-                            {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit','onclick'=>"return confirm('Are you sure you want to delete this item?');",'class' => 'btn btn-danger btn-sm'] )  }}
-                            {!!Form::close()!!}
+                            <a href="/posts/{{$post['id']}}">{{$post['caption']}}</a></td>                   
+                        <td class="text-right">
+                            @if(Auth::user()->can('update',Auth::user()))
+                                <a class="btn btn-default " href="/posts/{{$post['id']}}/edit"><i class="fa fa-edit"></i></a>
+                            @endif
+                        </td>
+                        <td>
+                            @if(Auth::user()->can('delete',Auth::user()))
+                                {!!Form::open(['action' => ['PostsController@destroy', $post['id'] ], 'method' => 'POST', 'class' => 'text-right'])!!}
+                                {{Form::hidden('_method', 'DELETE')}}
+                                {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit','onclick'=>"return confirm('Are you sure you want to delete this item?');",'class' => 'btn btn-danger btn-sm'] )  }}
+                                {!!Form::close()!!}
+                            @endif
     
                         </td>
                     </tr>

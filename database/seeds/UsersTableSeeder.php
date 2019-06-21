@@ -20,7 +20,7 @@ class UsersTableSeeder extends Seeder
         // php artisan db:seed
         //php artisan db:seed --class=UsersTableSeeder
         
-        $users_num = 5;
+        $users_num = 3;
         $i=1;
         
 
@@ -42,11 +42,40 @@ class UsersTableSeeder extends Seeder
                 'description'=>sprintf('panel description: %s',$user['username'])
             );
 
+            //$profile = \App\Profile::create($profile);
             DB::table('profiles')->insert($profile);
             
 
             $i++;
         }
+
+        $policyUsers = Array(
+            [
+                'name' => sprintf('User %s','Admin'),
+                'username' => sprintf('%s','adminuser'),
+                'email' => 'admin@email.com',
+                'password' => bcrypt('password')
+            ],
+            [
+                'name' => sprintf('User %s','Guest'),
+                'username' => sprintf('%s','guestuser'),
+                'email' => 'guest@email.com',
+                'password' => bcrypt('password')
+            ],
+            [
+                'name' => sprintf('User %s','Administrator'),
+                'username' => sprintf('%s','administrator'),
+                'email' => 'administrator@email.com',
+                'password' => bcrypt('password')
+            ]
+        );
+
+        foreach($policyUsers as $p_user){
+
+            \App\User::create($p_user);
+
+        }
+
         
     }
 }

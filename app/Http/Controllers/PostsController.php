@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+
+use \App\User;
 use App\Post;
 
 class PostsController extends Controller
@@ -40,12 +42,19 @@ class PostsController extends Controller
     }
 
     public function create(){
+
+        //Policy user : UserPolicy@create
+        $this->authorize('create',User::class);
+
         return view('/posts/create');
     }
 
     public function store(Request $request){
 
         //dd(request()->all());
+        
+        //Policy user: UserPolicy@create
+        $this->authorize('create',User::class);
 
         request()->validate([
             'caption'=>['required', 'string', 'max:255']
@@ -86,8 +95,9 @@ class PostsController extends Controller
 
     }
 
-    public function edit($id)
+    public function edit(User $user,$id)
     {
+        $this->authorize('update',$user);
         
         if(!isset($id)){
             return redirect('/posts')->with('error','post not founded');
@@ -103,10 +113,12 @@ class PostsController extends Controller
 
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request,User $user,$id)
     {
 
         //dd(request()->all());
+
+        $this->authorize('update',$user);
 
         $this->validate($request,[
             'caption'=>['required', 'string', 'max:255'],
@@ -148,8 +160,10 @@ class PostsController extends Controller
 
     }
 
-    public function destroy($id)
+    public function destroy(User $user,$id)
     {
+
+        $this->authorize('delete',$user);
 
         $post = Post::findOrFail($id);
 
