@@ -57,7 +57,7 @@ class PostsController extends Controller
         $this->authorize('create',User::class);
 
         request()->validate([
-            'caption'=>['required', 'string', 'max:255']
+            'caption'=>['required', 'string','min:3', 'max:255']
         ]);
 
         if(request()->hasFile('image')){
