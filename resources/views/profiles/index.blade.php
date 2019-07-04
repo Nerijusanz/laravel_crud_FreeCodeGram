@@ -9,7 +9,7 @@
         </div>
     @endif
             
-    @if(Auth::user()->can('create',\App\User::class))
+    @if(Auth::user())
         <div class="row">
             <div class="col-md-8 col-sm-8 mb-2">     
                 <a href="/posts/create" class="btn btn-primary">
