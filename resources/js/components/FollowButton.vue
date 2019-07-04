@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn btn-primary ml-4" @click="followUser()">follow</button>
+    <a class="btn btn-primary ml-4" v-on:click="followUser($event)">follow</a>
   </div>
 </template> 
 
@@ -24,9 +24,10 @@ export default {
   },
 
   methods: {
-    async followUser() {
+    async followUser(e) {
       // console.log(this.userId);
 
+      e.stopPropagation();
       try {
         const res = await axios.post(`/follow/${this.userId}`); //props: user-id
 
