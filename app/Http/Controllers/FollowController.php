@@ -17,11 +17,13 @@ class FollowController extends Controller
 
         $user = User::find($id);
 
+        if(!$user) return null;
+
         $ajaxResponse = [
             'id'=>$user->id,
             'username'=>$user->username
         ];
 
-        return ($user) ? $ajaxResponse : null;
+        return $ajaxResponse;
     }
 }
