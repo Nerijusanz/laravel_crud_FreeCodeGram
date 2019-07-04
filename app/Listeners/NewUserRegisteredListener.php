@@ -32,7 +32,7 @@ class NewUserRegisteredListener implements ShouldQueue
 
         //queue worker should be turn on!
         //lets imagine server do something heavy process : image proccessing ...
-        sleep(10); //10s    make note: do queue to database
+        //sleep(10); //10s    make note: do queue to database
         // after that send email
         Mail::to($user->email)->send(new registerUserMail($user));
     }
