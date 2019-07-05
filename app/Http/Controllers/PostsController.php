@@ -120,13 +120,18 @@ class PostsController extends Controller
 
         $this->authorize('update',$user);
 
-        $this->validate($request,[
-            'caption'=>['required', 'string', 'max:255'],
-            'image' => 'file|image|max:1999'
+        $data  = $this->validate($request,[
+            'caption'=>['required', 'string', 'max:255']
         ]);
 
+        if(request()->hasFile('image')){
+            request()->validate([
+                'image' => 'file|image|max:1999'
+            ]);
+        }
+
         $post = Post::find($id);
-        $post->caption = $request->input('caption');
+        $post->caption = $data['caption'];
 
         if($request->hasFile('image')){
             // Get filename with the extension
