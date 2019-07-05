@@ -62,7 +62,7 @@ class PostsController extends Controller
 
         if(request()->hasFile('image')){
             request()->validate([
-                'image' => 'image|nullable|max:1999'
+                'image' => 'file|image|max:1999'
             ]);
         }
  
@@ -122,7 +122,7 @@ class PostsController extends Controller
 
         $this->validate($request,[
             'caption'=>['required', 'string', 'max:255'],
-            'image' => 'image|nullable|max:1999'
+            'image' => 'file|image|max:1999'
         ]);
 
         $post = Post::find($id);
