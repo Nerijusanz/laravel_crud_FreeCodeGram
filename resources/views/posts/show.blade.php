@@ -47,9 +47,9 @@
         <div class="row">
             <div class="col-md-4 col-sm-4">
                 @if($post->image != null)
-                    <img style="width:100%" src="/storage/images/{{$post->image}}" />
+                    <img src="{{ asset('storage/images/'.$post->image) }}" class="img-thumbnail" />
                 @else
-                    <img style="width:100%" src="/storage/images/no_image.png" />
+                    <img src="{{ asset('storage/images/no_image.png') }}" class="img-thumbnail" />
                 @endif
                 
             </div>
