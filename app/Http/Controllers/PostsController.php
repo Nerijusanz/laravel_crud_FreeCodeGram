@@ -56,7 +56,7 @@ class PostsController extends Controller
         //Policy user: UserPolicy@create
         $this->authorize('create',User::class);
 
-        request()->validate([
+        $data = request()->validate([
             'caption'=>['required', 'string','min:3', 'max:255']
         ]);
 
@@ -65,10 +65,10 @@ class PostsController extends Controller
                 'image' => 'file|image|max:1999'
             ]);
         }
- 
+
         $post = new Post;
         $post->user_id = auth()->user()->id;    //authenticated user
-        $post->caption = $request->input('caption');
+        $post->caption = $data['caption'];  // get validate caption
 
         if(request()->hasFile('image')){
             // Get filename with the extension
