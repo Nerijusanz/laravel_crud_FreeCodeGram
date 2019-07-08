@@ -11,6 +11,13 @@ class UserPolicy
     
     protected $allowed = ['admin@email.com','administrator@email.com'];
 
+
+    protected function checkUserPolicyStatus($user){
+
+        return in_array($user->email,$this->allowed );
+
+    }
+
     
     public function viewAny(User $user)
     {
@@ -40,8 +47,8 @@ class UserPolicy
     {
         //allowed users to create
         
-
-        return in_array($user->email,$this->allowed );
+        return $this->checkUserPolicyStatus($user);
+        
     }
 
     /**
@@ -55,7 +62,7 @@ class UserPolicy
     {
         //allowed users to create
 
-        return in_array($user->email,$this->allowed );
+        return $this->checkUserPolicyStatus($user);
     }
 
     /**
@@ -69,7 +76,7 @@ class UserPolicy
     {
         //allowed users to create
 
-        return in_array($user->email,$this->allowed );
+        return $this->checkUserPolicyStatus($user);
     }
 
     /**
