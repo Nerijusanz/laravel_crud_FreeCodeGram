@@ -9,12 +9,9 @@ class UserPolicy
 {
     use HandlesAuthorization;
     
-    /**
-     * Determine whether the user can view any models.
-     *
-     * @param  \App\User  $user
-     * @return mixed
-     */
+    protected $allowed = ['admin@email.com','administrator@email.com'];
+
+    
     public function viewAny(User $user)
     {
         //
@@ -42,9 +39,9 @@ class UserPolicy
     public function create(User $user)
     {
         //allowed users to create
-        $allow = ['admin@email.com','administrator@email.com'];
+        
 
-        return in_array($user->email,$allow);
+        return in_array($user->email,$this->allowed );
     }
 
     /**
@@ -57,9 +54,8 @@ class UserPolicy
     public function update(User $user, User $model)
     {
         //allowed users to create
-        $allow = ['admin@email.com','administrator@email.com'];
 
-        return in_array($user->email,$allow);
+        return in_array($user->email,$this->allowed );
     }
 
     /**
@@ -72,9 +68,8 @@ class UserPolicy
     public function delete(User $user, User $model)
     {
         //allowed users to create
-        $allow = ['admin@email.com','administrator@email.com'];
 
-        return in_array($user->email,$allow);
+        return in_array($user->email,$this->allowed );
     }
 
     /**
