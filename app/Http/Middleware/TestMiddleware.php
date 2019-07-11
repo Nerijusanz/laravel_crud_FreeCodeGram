@@ -15,8 +15,16 @@ class TestMiddleware
      */
     public function handle($request, Closure $next)
     {
+        /*
+        // turn on/off middleware on Kernel.php
+        //add into $midleware list:
+        //\App\Http\Middleware\TestMiddleware::class //test middleware
+        if( now()->format('s') % 2){
+            return $next($request);
+        }
 
-        dd('TestMiddleware initialized');
+        return response("TestMiddleware Not allowed");
+        */
 
         return $next($request);
     }
