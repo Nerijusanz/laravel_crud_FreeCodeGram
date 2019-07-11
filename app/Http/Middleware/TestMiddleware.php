@@ -17,7 +17,7 @@ class TestMiddleware
     {
         /*
         // turn on/off middleware on Kernel.php
-        //add into $midleware list:
+        //add into $midleware list
         //\App\Http\Middleware\TestMiddleware::class //test middleware
         if( now()->format('s') % 2){
             return $next($request);
