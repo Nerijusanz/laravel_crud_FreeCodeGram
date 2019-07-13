@@ -56,39 +56,22 @@ class PostsController extends Controller
         //Policy user: UserPolicy@create
         $this->authorize('create',User::class);
 
-        $data = request()->validate([
-            'caption'=>['required', 'string','min:3', 'max:255']
-        ]);
-
-        if(request()->hasFile('image')){
-            request()->validate([
-                'image' => 'file|image|max:1999'
-            ]);
-        }
+        $data = $this->validateRequestData();
 
         $post = new Post;
         $post->user_id = auth()->user()->id;    //authenticated user
         $post->caption = $data['caption'];  // get validate caption
 
+
         if(request()->hasFile('image')){
-            // Get filename with the extension
-            $filenameWithExt = $request->file('image')->getClientOriginalName();
-            // Get just filename
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            // Get just ext
-            $extension = $request->file('image')->getClientOriginalExtension();
-            // Filename to store
-            $fileNameToStore= $filename.'_'.time().'.'.$extension;
+            
             // Upload Image
-            $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
+            $requestFileObj = request()->file('image');
+            $fileNameToStore = $this->fileNameToStore( $requestFileObj );
 
-            //save uploaded file to posts DB
+            $this->uploadImage($requestFileObj,$fileNameToStore,$oldUploadedFile=null );
+            
             $post->image = $fileNameToStore;
-
-            //processing image dimensions
-            $image = Image::make(public_path('storage/images/'.$fileNameToStore))->fit(300,300);
-            $image->save();
-
         }
 
         $post->save();
@@ -121,48 +104,22 @@ class PostsController extends Controller
 
         $this->authorize('update',$user);
 
-        $data  = $this->validate($request,[
-            'caption'=>['required', 'string', 'max:255']
-        ]);
-
-        if(request()->hasFile('image')){
-            request()->validate([
-                'image' => 'file|image|max:1999'
-            ]);
-        }
+        $data  = $this->validateRequestData();
 
         $post = Post::find($id);
         $post->caption = $data['caption'];
 
-        if($request->hasFile('image')){
-            // Get filename with the extension
-            $filenameWithExt = $request->file('image')->getClientOriginalName();
-            // Get just filename
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            // Get just ext
-            $extension = $request->file('image')->getClientOriginalExtension();
-            // Filename to store
-            $fileNameToStore= $filename.'_'.time().'.'.$extension;
-
-            // if file was uploaded before
-            if($post->image){
-                // Delete Image from storage
-                Storage::delete('public/images/'.$post->image);
-            }
+        if(request()->hasFile('image')){
             
             // Upload Image
-            $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
-
-            //save uploaded file to posts DB
+            $requestFileObj = request()->file('image');
+            $fileNameToStore = $this->fileNameToStore( $requestFileObj );
+            $oldUploadedFile = $post->image;
+            $this->uploadImage($requestFileObj,$fileNameToStore,$oldUploadedFile );
+            
             $post->image = $fileNameToStore;
-
-            //processing image dimensions
-            $image = Image::make(public_path('storage/images/'.$fileNameToStore))->fit(300,300);
-            $image->save();
-
-
         }
-
+        
         $post->save();
         return redirect('/profiles')->with('success','item updated');
 
@@ -195,6 +152,65 @@ class PostsController extends Controller
         $post->delete();
 
         return redirect('/profiles')->with('success', 'Post Removed');
+
+    }
+
+    private function validateRequestData(){
+
+
+        $data = request()->validate([
+            'caption'=>['required', 'string','min:3', 'max:255']
+        ]);
+
+        if(request()->hasFile('image')){
+
+            $file = request()->validate([
+                'image' => 'file|image|max:1999'
+            ]);
+
+            $data = array_merge($data,$file);
+        }
+
+        return $data;
+
+    }
+
+
+    protected function fileNameToStore($newUploadFile){
+
+        if($newUploadFile === null) return null;
+
+            // Get filename with the extension
+            $filenameWithExt = $newUploadFile->getClientOriginalName();
+            // Get just filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            // Get just ext
+            $extension = $newUploadFile->getClientOriginalExtension();
+            // Filename to store
+            $fileNameToStore= $filename.'_'.time().'.'.$extension;
+
+            return $fileNameToStore;
+
+    }
+
+
+    protected function uploadImage($requestFileObj,$fileNameToStore,$oldFileWasUploaded=null){
+
+        if($requestFileObj === null ) return false;
+
+            // if file was uploaded before
+            if($oldFileWasUploaded !== null){
+                // Delete Image from storage
+                Storage::delete('public/images/' . $oldFileWasUploaded);
+            }
+
+            // Request() Upload File
+            $requestFileObj->storeAs('public/images', $fileNameToStore );
+
+            //Intervention Image library, php open source library
+            //processing image dimensions
+            $image = Image::make(public_path('storage/images/' . $fileNameToStore ))->fit(300,300);
+            $image->save();
 
     }
 }
