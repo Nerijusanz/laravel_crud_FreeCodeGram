@@ -11,71 +11,41 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        //Random Factorie seeder command
-        // factory(\App\User::class,5)->create();
 
-        //DB::table('users')->delete();
+        $policyUsers = $this->policyUsers();
 
-        //run command:
-        // php artisan db:seed
-        //php artisan db:seed --class=UsersTableSeeder
-        
-        $users_num = 3;
-        $i=1;
-        
+        foreach($policyUsers as $user){
 
-        while($i<=$users_num){
+            \App\User::create($user);
 
-            $user = Array(
-                'name' => sprintf('User%s',$i),
-                'username' => sprintf('user%s',$i),
-                'email' => sprintf('user%s@email.com',$i),
-                'password' => bcrypt('password')
-            );
-
-            $user = \App\User::create($user);
-        
-            //create user Profile by user
-            $profile = Array(
-                'user_id'=>$user['id'],
-                'title'=>sprintf('Panel title: %s',$user['username']),
-                'description'=>sprintf('panel description: %s',$user['username'])
-            );
-
-            //$profile = \App\Profile::create($profile);
-            DB::table('profiles')->insert($profile);
-            
-
-            $i++;
         }
+    
+    }
 
-        $policyUsers = Array(
+    private function policyUsers(){
+
+        return Array(
             [
-                'name' => sprintf('User %s','Admin'),
-                'username' => sprintf('%s','adminuser'),
+                'name' => sprintf('%s','Admin'),
+                'username' => sprintf('%s','admin'),
                 'email' => 'admin@email.com',
                 'password' => bcrypt('password')
             ],
             [
-                'name' => sprintf('User %s','Guest'),
-                'username' => sprintf('%s','guestuser'),
+                'name' => sprintf('%s','Guest'),
+                'username' => sprintf('%s','guest'),
                 'email' => 'guest@email.com',
                 'password' => bcrypt('password')
             ],
             [
-                'name' => sprintf('User %s','Administrator'),
+                'name' => sprintf('%s','Administrator'),
                 'username' => sprintf('%s','administrator'),
                 'email' => 'administrator@email.com',
                 'password' => bcrypt('password')
             ]
         );
 
-        foreach($policyUsers as $p_user){
-
-            \App\User::create($p_user);
-
-        }
-
-        
     }
+
+    
 }
