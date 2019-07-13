@@ -176,16 +176,16 @@ class PostsController extends Controller
     }
 
 
-    protected function fileNameToStore($newUploadFile){
+    protected function fileNameToStore( $requestFileObj ){
 
-        if($newUploadFile === null) return null;
+        if($requestFileObj === null) return null;
 
             // Get filename with the extension
-            $filenameWithExt = $newUploadFile->getClientOriginalName();
+            $filenameWithExt = $requestFileObj->getClientOriginalName();
             // Get just filename
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             // Get just ext
-            $extension = $newUploadFile->getClientOriginalExtension();
+            $extension = $requestFileObj->getClientOriginalExtension();
             // Filename to store
             $fileNameToStore= $filename.'_'.time().'.'.$extension;
 
