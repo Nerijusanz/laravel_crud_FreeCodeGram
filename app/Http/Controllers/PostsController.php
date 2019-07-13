@@ -161,7 +161,7 @@ class PostsController extends Controller
         }
 
         $post->save();
-        return redirect('/profiles')->with('success','Post Created');
+        return redirect('/profiles')->with('success','item updated');
 
     }
 
