@@ -82,12 +82,13 @@ class PostsController extends Controller
             // Upload Image
             $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
 
+            //save uploaded file to posts DB
+            $post->image = $fileNameToStore;
+
             //processing image dimensions
             $image = Image::make(public_path('storage/images/'.$fileNameToStore))->fit(300,300);
             $image->save();
 
-            //save uploaded file to posts DB
-            $post->image = $fileNameToStore;
         }
 
         $post->save();
