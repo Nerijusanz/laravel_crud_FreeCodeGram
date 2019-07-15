@@ -38,3 +38,20 @@ Route::get('/posts/{id}','PostsController@show');
 Route::get('/posts/{id}/edit','PostsController@edit');
 Route::put('/posts/{id}','PostsController@update');
 Route::delete('/posts/{id}','PostsController@destroy');
+
+Route::get('/roles',function(){
+    
+    $user = \App\User::find(1);
+
+    $roles = \App\Role::all();
+
+    $user->roles()->sync($roles);
+    //$user->roles()->sync([1,2,3]);
+    //$user->roles()->syncWithoutDetaching([1,2,3]);
+    //$user->roles()->attach($roles);
+    //$user->roles()->detach([1,2]);
+    
+
+    return 'roles';
+
+});
