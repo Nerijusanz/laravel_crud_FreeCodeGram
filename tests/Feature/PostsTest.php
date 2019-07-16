@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 
 
 
@@ -15,6 +16,14 @@ class PostsTest extends TestCase
 {
 
     use RefreshDatabase;
+
+    protected function setUp():void
+    {
+
+        parent::setUp();
+
+        Event::fake();
+    }
     
 
     public function testPosts()
@@ -27,26 +36,18 @@ class PostsTest extends TestCase
 
         $this->withoutExceptionHandling(); //turn off laravel exception error
 
-        $userEmail = 'admin@email.com';
-
-        $user = factory(User::class)->create([
-            'email'=> $userEmail
-        ]);
-
-        $userId = $user->id;
-
-        $user = User::where('id','=',$userId)->first();
+        $user = $this->_createAdminUser();
 
         $this->actingAs($user); //logged in user
 
 
-        $this->post('/posts',$this->_postData($userId,'test Caption'));
+        $this->post('/posts',$this->_postData($user->id,'test Caption'));
 
         //check if post created
         $this->assertCount(1,Post::all());
 
         //check if post created belongs logged in user
-        $postByUserId = Post::where('user_id','=',$userId)->get();
+        $postByUserId = Post::where('user_id','=',$user->id)->get();
 
         $this->assertCount(1,$postByUserId);
 
@@ -55,17 +56,9 @@ class PostsTest extends TestCase
 
     public function testPostCaptionFieldRequired(){
 
+        $user = $this->_createAdminUser();
         
-
-        $userEmail = 'admin@email.com';
-
-        $user = factory(User::class)->create([
-            'email'=> $userEmail
-        ]);
-
-        $userId = $user->id;
-        
-        $response = $this->post('/posts',$this->_postData($userId,'') );
+        $response = $this->post('/posts',$this->_postData($user->id,'') );
         
         $this->assertCount(0,Post::all());
         
@@ -76,17 +69,22 @@ class PostsTest extends TestCase
 
     public function testPostCaptionFieldLeastThreeCharactersRequired(){
 
-        $userEmail = 'admin@email.com';
 
-        $user = factory(User::class)->create([
-            'email'=> $userEmail
-        ]);
-
-        $userId = $user->id;
+        $user = $this->_createAdminUser();
         
-        $response = $this->post('/posts',$this->_postData($userId,'xx') );
+        $response = $this->post('/posts',$this->_postData($user->id,'xx') );
         
         $this->assertCount(0,Post::all());
+
+    }
+
+    private function _createAdminUser(){
+
+        $email = 'admin@email.com';
+
+        return factory(User::class)->create([
+            'email'=> $email
+        ]);
 
     }
 
