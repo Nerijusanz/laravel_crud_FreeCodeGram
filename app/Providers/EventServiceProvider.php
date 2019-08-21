@@ -22,7 +22,7 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        NewUserRegisteredEvent::class => [
+        NewUserRegisteredEvent::class => [  //connect Listeners to Event
             NewUserRegisteredListener::class
         ],
     ];
