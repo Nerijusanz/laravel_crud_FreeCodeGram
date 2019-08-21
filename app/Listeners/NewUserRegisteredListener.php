@@ -6,6 +6,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 use Illuminate\Support\Facades\Mail;
+
+use App\Events\NewUserRegisteredEvent;
 use App\Mail\registerUserMail;
 
 class NewUserRegisteredListener implements ShouldQueue
@@ -26,7 +28,7 @@ class NewUserRegisteredListener implements ShouldQueue
      * @param  object  $event
      * @return void
      */
-    public function handle($event)
+    public function handle(NewUserRegisteredEvent $event)
     {
         $user = $event->user;   //catch event user obj
 
